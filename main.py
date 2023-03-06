@@ -66,7 +66,6 @@ class analisador_lexico:
                     self.resetSimbAtual() #apaga o simbolo guardado ignorando a linha por ser comentario
                     self.E0 #manda ler a proxima linha
                 case "*":
-                    self.resetSimbAtual()
                     self.blockComent_State() #esse estado É onde verifica o comentario em bloco
                 case _:
                     self.div_state()
@@ -94,14 +93,9 @@ class analisador_lexico:
 
                 case '*':
                     if len(self.linha) >= 1:
-                        match self.linha[0]:
-                            case "\n":
-                                self.lerLinha()
-                                self.blockComent_State()
-                            case _:
-                                self.simboloAtual += self.linha.pop(0)
-                                self.pularProximoSimbolo()
-                                self.blockComent_State()
+                        self.simboloAtual += self.linha.pop(0)
+                        self.pularProximoSimbolo()
+                        self.blockComent_State()
 
                 case "\n":
                     self.resetSimbAtual()
