@@ -7,13 +7,10 @@ class analisador_lexico:
         self.reservada = [] #vetor que retorna o simbolo e a linha lida
         self.linha = '' #linha lida
         self.arq = arquivo #arquivo lido
-        self.delimI = ""
-        self.delimF = ""
         self.alfabeto = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
         self.digito = set("0123456789")
-        self.inicioCadeia = []
-        self.fimCadeia = []
         self.simbolos = [] #tabela com simbolos lido
+        self.comentario = []
         self._arquivo = open(arquivo, "r", encoding="UTF-8") #abertura de arquivo no modo leitura
 
     def verificarSubset(self,simbolo): #função que recebe um simbolo qualquer
@@ -68,90 +65,53 @@ class analisador_lexico:
                 case "/": #Neste ponto ele esta lendo a segunda / depois de ler a primeira então identifica como comentario
                     self.resetSimbAtual() #apaga o simbolo guardado ignorando a linha por ser comentario
                     self.E0 #manda ler a proxima linha
-                #Os dois casos a seguir é se o termo da pilha for vazio ou quebra de linha
-                case " ":
-                    self.div_state() #ele identifica como uma divisão e manda para o estado que trata disso
-                case "\n":
-                    self.div_state()
-                # aqui ele identificou um comentario em bloco então manda para o estado do operado de multiplicação
                 case "*":
+                    self.resetSimbAtual()
                     self.blockComent_State() #esse estado É onde verifica o comentario em bloco
+                case _:
+                    self.div_state()
+
 
     def blockComent_State(self):#estado que so chega a partir do estado de comentario(previamente foi lido uma /)
-        if len(self.linha) >= 1: #Verificando se a algo na linha
-            match self.linha[0]:#A partir daqui ele para de guardar as informações até o comentario ser fechado
-                case "*": #identifica o segundo item que correspnde ao comentario em bloco
-                    self.simboloAtual += self.linha.pop(0)#adiciona o asterisco a simbolo
-                    print(self.simboloAtual)
-                    if self.simboloAtual == "/*":
-                        self.inicioCadeia.append(self.simboloAtual)
-                        self.percorrerCadeias()
-                        if self.delimI == "CoMF" or self.delimF == "CoMF":
-                            self.reservada.append(self.linha_lida)
-                            self.reservada.append(self.delimI)
-                            self.reservada.append(self.simboloAtual)
-                            self.simbolos.append(self.reservada)
-                            self.resetReservada()
-                    self.blockComent_State() #volta para o estado inicial
+        if len(self.linha) >= 1:
+            match self.linha[0]:
+                case '/':
+                    if len(self.linha) >= 1:
+                        self.simboloAtual += self.linha.pop(0)
+                        if self.simboloAtual == "*/":
+                            match self.linha[0]:
+                                case " ":
+                                    self.pularProximoSimbolo()
+                                    self.resetSimbAtual()
+                                    self.E1()
+                                case "\n":
+                                    self.resetSimbAtual()
+                                    self.ignoraBranco()
+                        else:
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.blockComent_State()
 
-                case "/": #identificou o fim do comentario em bloco
-                    self.simboloAtual += self.linha.pop(0) #adiciona ao simbolo atualmente lindo
-                    if self.simboloAtual == "*/": #verifica o fechamento do comentario em bloco
-                        self.fimCadeia.append(self.simboloAtual)
-                        self.percorrerCadeias()
-                        if self.delimI == "CoMF" or self.delimF == "CoMF":
-                            self.reservada.append(self.linha_lida)
-                            self.reservada.append(self.delimI)
-                            self.reservada.append(self.simboloAtual)
-                            self.simbolos.append(self.reservada)
-                            self.resetReservada()
-                        self.resetSimbAtual() # reseta o simbolo para identificar o proximo
-                        self.E1() #volta a fazer a analize de simbolos normalmente
-                    else: # se não identificar continua a / apos o * continua a procurar
-                        self.resetSimbAtual()
-                        self.linha.pop(0) #elimina o que ja foi lido
-                        self.blockComent_State()
+                case '*':
+                    if len(self.linha) >= 1:
+                        match self.linha[0]:
+                            case "\n":
+                                self.lerLinha()
+                                self.blockComent_State()
+                            case _:
+                                self.simboloAtual += self.linha.pop(0)
+                                self.pularProximoSimbolo()
+                                self.blockComent_State()
 
-                case "\n":#chegou a quebra de linha sem identificar o fechamento do comentario
+                case "\n":
                     self.resetSimbAtual()
-                    self.linha = self.lerLinha() #ler a proxima linha
+                    self.lerLinha()
                     self.blockComent_State()
 
                 case _:
                     self.linha.pop(0)
                     self.resetSimbAtual()
                     self.blockComent_State()
-
-    def percorrerCadeias(self):
-        if len(self.inicioCadeia) >= 1 or len(self.fimCadeia) >=1:
-            for i in range( 0, len(self.inicioCadeia)-1):
-                for j in range( 0, len(self.fimCadeia)-1):
-                    if self.inicioCadeia[i] == "/*":
-                        if self.fimCadeia[j] == "*/":
-                            self.inicioCadeia.pop(i)
-                            self.fimCadeia.pop(j)
-                    elif self.inicioCadeia[i] == "(":
-                        if self.fimCadeia[j] == ")":
-                            self.inicioCadeia.pop(i)
-                            self.fimCadeia.pop(j)
-
-
-            for k in range(0, len(self.fimCadeia)):
-                if len(self.fimCadeia) >= 1:
-                    if self.fimCadeia[k] != "*/":
-                        self.delimF = "CoMF"
-                    else:
-                        self.delimF ="TMF"
-            for l in range(0, len(self.inicioCadeia)):
-                if len(self.inicioCadeia) >= 1:
-                    if self.inicioCadeia[l] != "/*":
-                        self.delimI = "CoMF"
-                    else:
-                        self.delimI ="TMF"
-
-        self.inicioCadeia = []
-        self.fimCadeia = []
-
 
 #operadores aritimeticos
     def div_state(self): #estado depois da / ser lida no E1(Divisão)
@@ -446,7 +406,17 @@ class analisador_lexico:
         if len(self.linha) >= 1:
             match self.linha[0]:
                 case "/":
-                    self.blockComent_State()
+                    self.simboloAtual += self.linha.pop(0)
+                    if (self.simboloAtual != ""):
+                        self.reservada.append(self.linha_lida)
+                        self.reservada.append("CoMF")
+                        self.reservada.append(self.simboloAtual)
+                        self.simbolos.append(self.reservada)
+                    self.resetReservada()
+                    self.resetSimbAtual()
+                    self.pularProximoSimbolo()
+                    self.ignoraBranco()
+
                 case "\n":
                     if (self.simboloAtual != ''):
                         self.reservada.append(self.linha_lida)
@@ -1116,12 +1086,6 @@ class analisador_lexico:
 
     def colchetes_state(self):
         if len(self.linha) >= 1:
-            if self.simboloAtual == "[":
-                self.inicioCadeia.append(self.simboloAtual)
-            elif self.simboloAtual == "]":
-                self.fimCadeia.append(self.simboloAtual)
-            else:
-                self.resetSimbAtual()
             match self.linha[0]:
                 case "\n":
                     if (self.simboloAtual != ''):
@@ -1146,12 +1110,6 @@ class analisador_lexico:
 
     def parenteses_state(self):
         if len(self.linha) >= 1:
-            if self.simboloAtual == "(":
-                self.inicioCadeia.append(self.simboloAtual)
-            elif self.simboloAtual == ")":
-                self.fimCadeia.append(self.simboloAtual)
-            else:
-                self.resetSimbAtual()
             match self.linha[0]:
                 case "\n":
                     if (self.simboloAtual != ''):
@@ -1176,12 +1134,6 @@ class analisador_lexico:
 
     def chaves_state(self):
         if len(self.linha) >= 1:
-            if self.simboloAtual == "{":
-                self.inicioCadeia.append(self.simboloAtual)
-            elif self.simboloAtual == "}":
-                self.fimCadeia.append(self.simboloAtual)
-            else:
-                self.resetSimbAtual()
             match self.linha[0]:
                 case "\n":
                     if (self.simboloAtual != ''):
@@ -1210,6 +1162,7 @@ class analisador_lexico:
             match self.linha[0]:
                 case '"':
                     if (self.simboloAtual != ""):
+                        self.simboloAtual += self.linha.pop(0)
                         self.reservada.append(self.linha_lida)
                         self.reservada.append("CAC")
                         self.reservada.append(self.simboloAtual)
@@ -1382,6 +1335,7 @@ class analisador_lexico:
                 case ".":
                     self.simboloAtual += self.linha.pop(0)
                     self.ponto_state()
+
                 case _:
                     if self.verificarSubset(self.linha[0]) == True:
                         self.simboloAtual += self.linha.pop(0)
@@ -2849,7 +2803,7 @@ class analisador_lexico:
 
 
 
-teste = analisador_lexico("teste2.txt")
+teste = analisador_lexico("teste.txt")
 teste.E0()
 teste.E0()
 teste.E0()
