@@ -2859,7 +2859,7 @@ class analisador_lexico:
 
 
 
-string.ascii_letters
+
 
 teste = analisador_lexico("teste.txt")
 teste.E0()
