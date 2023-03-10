@@ -11,6 +11,7 @@ class analisador_lexico:
         self.digito = set("0123456789")
         self.simbolos = [] #tabela com simbolos lido
         self.comentario = []
+        self.erro_comentario = []
         self._arquivo = open(arquivo, "r", encoding="UTF-8") #abertura de arquivo no modo leitura
 
     def verificarSubset(self,simbolo): #função que recebe um simbolo qualquer
@@ -78,6 +79,10 @@ class analisador_lexico:
                     if len(self.linha) >= 1:
                         self.simboloAtual += self.linha.pop(0)
                         if self.simboloAtual == "*/":
+                            self.comentario.append(self.linha_lida)
+                            self.comentario.append(self.simboloAtual)
+                            self.erro_comentario.append(self.comentario)
+                            self.comentario = []
                             match self.linha[0]:
                                 case " ":
                                     self.pularProximoSimbolo()
@@ -94,6 +99,11 @@ class analisador_lexico:
                 case '*':
                     if len(self.linha) >= 1:
                         self.simboloAtual += self.linha.pop(0)
+                        if self.simboloAtual == "/*":
+                            self.comentario.append(self.linha_lida)
+                            self.comentario.append(self.simboloAtual)
+                            self.erro_comentario.append(self.comentario)
+                            self.comentario = []
                         self.pularProximoSimbolo()
                         self.blockComent_State()
 
@@ -2730,6 +2740,21 @@ class analisador_lexico:
                         self.pularProximoSimbolo() #vai para o proximo simbolo
                         self.ignoraBranco()
 
+    def checarErroComent(self):
+        if(len(self.erro_comentario)-1) >= 1:
+            if self.erro_comentario[0][1] == "/*" and self.erro_comentario[1][1] == "*/":
+                    self.erro_comentario.pop()
+                    self.erro_comentario.pop()
+            self.checarErroComent()
+        else:
+            for j in self.erro_comentario:
+                j.insert(1,"CoMF")
+                self.simbolos.append(j)
+
+
+
+
+
     def ponto_state(self): #se o ponto for lido no estado E1 esse estado é chamado
         if len(self.linha) >= 1:
             match self.linha[0]:
@@ -2802,6 +2827,7 @@ teste.E0()
 teste.E0()
 teste.E0()
 teste.E0()
+teste.checarErroComent()
 arquivo0 = open("saida.txt", "a")
 for lin in teste.simbolos:
     arquivo0.write(str(lin)+"\n")

@@ -1,6 +1,8 @@
 contador = 0
 while (contador < 5)
-      /* print(contador)
-       contador   = contador + 1 */
+      */ print(contador)
+       contador   = contador + 1
       var moto
+            carro
+
  carro
