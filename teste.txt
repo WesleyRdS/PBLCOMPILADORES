@@ -2,6 +2,7 @@ procedure start(){
 
 real f = 3.0;
 @
+-
 texto msg = "teste
 /*
 if ( f >= -10) && (f < )

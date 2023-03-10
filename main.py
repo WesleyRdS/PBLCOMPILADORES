@@ -11,7 +11,7 @@ class analisador_lexico:
         self.linha = '' #linha lida
         self.arq = arquivo #arquivo lido
         self.alfabeto = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-        self.digito = set("0123456789-1-2-3-4-5-6-7-8-9")
+        self.digito = set("0123456789-")
         self.simblosEspeciais = set("'\!#$%?@^`~")
         self.simbolos = [] #tabela com simbolos lido
         self.comentario = []
@@ -405,14 +405,18 @@ class analisador_lexico:
 
                 case _:
                     if (self.simboloAtual != ""):
-                        self.reservada.append(self.linha_lida)
-                        self.reservada.append("ART")
-                        self.reservada.append(self.simboloAtual)
-                        self.simbolos.append(self.reservada)
-                    self.resetReservada()
-                    self.resetSimbAtual()
-                    self.pularProximoSimbolo()
-                    self.ignoraBranco()
+                        if (self.verificarSubset(self.linha[0]) == True):
+                            self.simboloAtual += self.linha.pop(0)
+                            self.numero_State()
+                        else:
+                            self.reservada.append(self.linha_lida)
+                            self.reservada.append("ART")
+                            self.reservada.append(self.simboloAtual)
+                            self.simbolos.append(self.reservada)
+                            self.resetReservada()
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.ignoraBranco()
 
     def mult_state(self):
         if len(self.linha) >= 1:
@@ -1262,7 +1266,7 @@ class analisador_lexico:
 
                 case "-":
                     self.simboloAtual += self.linha.pop(0)
-                    self.numero_State()
+                    self.mini_state()
 
                 case "*":
                     self.simboloAtual += self.linha.pop(0)
