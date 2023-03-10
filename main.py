@@ -1,3 +1,6 @@
+import string
+
+
 class analisador_lexico:
 
     def __init__(self, arquivo):
@@ -8,16 +11,21 @@ class analisador_lexico:
         self.linha = '' #linha lida
         self.arq = arquivo #arquivo lido
         self.alfabeto = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-        self.digito = set("0123456789")
+        self.digito = set("0123456789-1-2-3-4-5-6-7-8-9")
+        self.simblosEspeciais = set("'\!#$%?@^`~")
         self.simbolos = [] #tabela com simbolos lido
         self.comentario = []
         self.erro_comentario = []
+        self.erro_caract = []
+        self.caract = []
         self._arquivo = open(arquivo, "r", encoding="UTF-8") #abertura de arquivo no modo leitura
 
     def verificarSubset(self,simbolo): #função que recebe um simbolo qualquer
         simb = set((simbolo)) #comando para setar esse simbolo como um conjunto
         if(simb.issubset(self.digito)): #verifica se esse simbolo faz parte do conjunto de digitos definidos
             return True
+        elif simb.issubset(self.simblosEspeciais):
+            return "simbolo"
         elif(simb.issubset(self.alfabeto)):#se não verifica se faz parte do conjunto de letras
             return "letra"
         else: #caso nenhuma das duas se prove verdadeiro retorna falso
@@ -1173,22 +1181,13 @@ class analisador_lexico:
                         self.simbolos.append(self.reservada)
                     self.resetReservada()
                     self.resetSimbAtual()
-                    if len(self.linha) >= 1:
-                        match self.linha[0]:
-                            case " ":
-                                self.pularProximoSimbolo()
-                                self.ignoraBranco()
-                                self.string_state()
-                            case "\n":
-                                self.lerLinha()
-                                if len(self.linha) >= 1:
-                                    self.simboloAtual += self.linha.pop(0)
-                                self.string_state()
+                    self.ignoraBranco()
 
                 case "\n":
-                    self.lerLinha()
+                    self.linha = self.lerLinha()
                     if len(self.linha) >= 1:
                         self.simboloAtual += self.linha.pop(0)
+
                     self.string_state()
 
 
@@ -1197,8 +1196,10 @@ class analisador_lexico:
                     self.string_state()
 
 
+
     def E1(self):
         if len(self.linha) >= 1:
+            print(self.linha[0])
             match self.linha[0]:
                 case '"':
                     self.simboloAtual += self.linha.pop(0)
@@ -1261,7 +1262,7 @@ class analisador_lexico:
 
                 case "-":
                     self.simboloAtual += self.linha.pop(0)
-                    self.mini_state()
+                    self.numero_State()
 
                 case "*":
                     self.simboloAtual += self.linha.pop(0)
@@ -1318,7 +1319,7 @@ class analisador_lexico:
                 case " ":
                     if (self.simboloAtual != ''):
                         self.reservada.append(self.linha_lida)
-                        self.reservada.append("IDE")
+                        self.reservada.append("CMF")
                         self.reservada.append(self.simboloAtual)
                         self.simbolos.append(self.reservada)
                     self.resetReservada()
@@ -1326,24 +1327,22 @@ class analisador_lexico:
                     self.pularProximoSimbolo()
                     self.ignoraBranco()
 
-                case "\n":
-                    if(self.simboloAtual != ''):
-                        self.reservada.append(self.linha_lida)
-                        self.reservada.append("IDE")
-                        self.reservada.append(self.simboloAtual)
-                        self.simbolos.append(self.reservada)
-                    self.resetReservada()
-                    self.resetSimbAtual()
-                    self.E0()
 
                 case ".":
                     self.simboloAtual += self.linha.pop(0)
                     self.ponto_state()
 
+                case " ":
+                    self.simboloAtual += self.linha.pop(0)
+                    self.resetReservada()
+                    self.resetSimbAtual()
+                    self.E1()
                 case _:
                     if self.verificarSubset(self.linha[0]) == True:
                         self.simboloAtual += self.linha.pop(0)
                         self.numero_State()
+                    elif self.verificarSubset(self.linha[0]) == "simbolo":
+                        self.erro_state()
                     else:
                         self.id_state()
 
@@ -2333,14 +2332,7 @@ class analisador_lexico:
                         self.simboloAtual += self.linha.pop(0)
                         self.id_state()
                     else:
-                        self.reservada.append(self.linha_lida)
-                        self.reservada.append("IDE")
-                        self.reservada.append(self.simboloAtual)
-                        self.simbolos.append(self.reservada)
-                        self.resetReservada()
-                        self.resetSimbAtual()
-                        self.pularProximoSimbolo()
-                        self.ignoraBranco()
+                        self.erro_state()
 
 
 
@@ -2689,16 +2681,50 @@ class analisador_lexico:
     def erro_state(self):
         if len(self.linha) >= 1:
             match self.linha[0]:  # Lê o proximo termo
+                case '"':
+                    match self.verificarSubset(self.simboloAtual):
+                        case "simbolo":
+                            if (self.simboloAtual != ""):
+                                self.reservada.append(self.linha_lida)
+                                self.reservada.append("TMF")
+                                self.reservada.append(self.simboloAtual)
+                                self.simbolos.append(self.reservada)
+                            self.resetReservada()
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.ignoraBranco()
+                        case _:
+                            if (self.simboloAtual != ""):
+                                self.reservada.append(self.linha_lida)
+                                self.reservada.append("IMF")
+                                self.reservada.append(self.simboloAtual)
+                                self.simbolos.append(self.reservada)
+                            self.resetReservada()
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.ignoraBranco()
                 case " ":
-                    if (self.simboloAtual != ""):
-                        self.reservada.append(self.linha_lida)
-                        self.reservada.append("IMF")
-                        self.reservada.append(self.simboloAtual)
-                        self.simbolos.append(self.reservada)
-                    self.resetReservada()
-                    self.resetSimbAtual()
-                    self.pularProximoSimbolo()
-                    self.ignoraBranco()
+                    match self.verificarSubset(self.simboloAtual):
+                        case "simbolo":
+                            if (self.simboloAtual != ""):
+                                self.reservada.append(self.linha_lida)
+                                self.reservada.append("TMF")
+                                self.reservada.append(self.simboloAtual)
+                                self.simbolos.append(self.reservada)
+                            self.resetReservada()
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.ignoraBranco()
+                        case _:
+                            if (self.simboloAtual != ""):
+                                self.reservada.append(self.linha_lida)
+                                self.reservada.append("IMF")
+                                self.reservada.append(self.simboloAtual)
+                                self.simbolos.append(self.reservada)
+                            self.resetReservada()
+                            self.resetSimbAtual()
+                            self.pularProximoSimbolo()
+                            self.ignoraBranco()
                 case "\n":
                     if (self.simboloAtual != ""):
                         self.reservada.append(self.linha_lida)
@@ -2708,9 +2734,22 @@ class analisador_lexico:
                     self.resetReservada()
                     self.resetSimbAtual()
                     self.E0()  # vai para o estado de leitura
+
                 case _:
                     self.simboloAtual += self.linha.pop(0)  # adiciona o simbolo
-                    self.erro_state()
+                    if self.verificarSubset(self.linha[0]) == True:
+                        if (self.simboloAtual != ""):
+                            self.reservada.append(self.linha_lida)
+                            self.reservada.append("TMF")
+                            self.reservada.append(self.simboloAtual)
+                            self.simbolos.append(self.reservada)
+                        self.resetReservada()
+                        self.resetSimbAtual()
+                        self.pularProximoSimbolo()
+                        self.ignoraBranco()
+                    else:
+                        self.pularProximoSimbolo()
+                        self.erro_state()
 
     def decimal_State(self): #estado após identificar um numero seguido de ponto flutuante
         if len(self.linha) >= 1:
@@ -2820,7 +2859,7 @@ class analisador_lexico:
 
 
 
-
+string.ascii_letters
 
 teste = analisador_lexico("teste.txt")
 teste.E0()
