@@ -1,16 +1,30 @@
-[1, 'PRE', 'procedure']
-[1, 'PRE', 'start']
-[1, 'DEL', '(']
-[1, 'DEL', ')']
-[1, 'DEL', '{']
-[3, 'PRE', 'real']
-[3, 'IDE', 'f']
-[3, 'REL', '=']
-[3, 'NRO', '3.0']
-[3, 'DEL', ';']
-[4, 'IMF', '@']
-[5, 'ART', '-']
-[6, 'CAC', '"=carro\n']
-[7, 'CAC', '++\n']
-[8, 'CAC', 'texto msg = teste\n']
-[6, 'CMF', '"']
+1, PRE, procedure
+1, PRE, start
+1, DEL, (
+1, DEL, )
+1, DEL, {
+3, PRE, real
+3, IDE, f
+3, REL, =
+3, NRO, 3.0
+3, DEL, ;
+4, IMF, @
+5, NRO, -9
+6, ART, ++
+7, IDE, texto
+7, IDE, msg
+7, REL, =
+7, CAC, "teste
+
+8, CAC, /*
+
+9, CAC, if ( f >= -10) && (f < )
+
+10, CAC, 	print("
+10, IMF, mensagem);
+11, IMF, 	print(
+11, CAC, "menÇagem"
+11, DEL, )
+11, DEL, ;
+14, CoMF, /*
+7, CMF, "

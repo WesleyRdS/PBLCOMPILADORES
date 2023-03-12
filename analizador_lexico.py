@@ -2819,16 +2819,9 @@ class analisador_lexico:
                         self.ignoraBranco()
 
     def checarErroComent(self): #estado que verifica erro de comentario
-        if(len(self.erro_comentario)-1) >= 1: #verifica se a lista de comentario tem pelo menos dois itens
-            #se sim verifica se os dois primeiros itens da lista estão abrindo e fechando oscomentarios
-            if self.erro_comentario[0][1] == "/*" and self.erro_comentario[1][1] == "*/":
-                    self.erro_comentario.pop() #se sim esses dois itens são removidos
-                    self.erro_comentario.pop()
-            self.checarErroComent() #A função chama ela mesma de novo
-        else: #se a lista tiver menos que dois itens ele identifica o comentario mal formado
-            for j in self.erro_comentario:
-                j.insert(1,"CoMF")
-                self.simbolos.append(j)
+        if len(self.erro_comentario) >= 1: #verifica se a lista de comentario tem pelo menos um item
+           self.simbolos.append(self.erro_comentario[0])
+           self.simbolos[-1].insert(1, "CoMF")
 
     def checarErroCadeia(self):
         if len(self.erro_caract) >= 1:
