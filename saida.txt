@@ -11,20 +11,22 @@
 4, IMF, @
 5, NRO, -9
 6, ART, ++
-7, IDE, texto
-7, IDE, msg
-7, REL, =
-7, CAC, "teste
+7, IDE, carro_______
+7, IDE, moto
+8, IDE, texto
+8, IDE, msg
+8, REL, =
+8, CAC, "teste
 
-8, CAC, /*
+9, CAC, /*
 
-9, CAC, if ( f >= -10) && (f < )
+10, CAC, if ( f >= -10) && (f < )
 
-10, CAC, 	print("
-10, IMF, mensagem);
-11, IMF, 	print(
-11, CAC, "menÇagem"
-11, DEL, )
-11, DEL, ;
-14, CoMF, /*
-7, CMF, "
+11, CAC, 	print("
+11, IMF, mensagem);
+12, IMF, 	print(
+12, CAC, "menÇagem"
+12, DEL, )
+12, DEL, ;
+15, CoMF, /*
+8, CMF, "

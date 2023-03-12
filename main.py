@@ -12,13 +12,14 @@ try:
             teste.E0()
             teste.checarErroComent()
             teste.checarErroCadeia()
+            nome_aquivoS = str(input("Digite como você quer que seja o nome do arquivo de saida referente ao arquivo anterior(Com a extensão do arquivo): "))
+            arquivo0 = open(nome_aquivoS, "a")
+            for lin in teste.simbolos:
+                arquivo0.write(str(lin[0]) + ", " + lin[1] + ", " + lin[2] + "\n")
+            print(teste.simbolos)
         except:
             print("Arquivo não encontrado!!!")
 except:
     print("Você não digitou um numero inteiro valido")
 
-nome_aquivoS = str(input("Digite como você quer que seja o nome do arquivo de saida referente ao arquivo anterior(Com a extensão do arquivo): "))
-arquivo0 = open(nome_aquivoS, "a")
-for lin in teste.simbolos:
-    arquivo0.write(str(lin[0])+", "+lin[1]+", "+lin[2]+"\n")
-print(teste.simbolos)
+

@@ -2350,6 +2350,19 @@ class analisador_lexico:
                     self.pularProximoSimbolo() #pula pro proximo simbolo a ser lido
                     self.ignoraBranco() #volta para o estado E1
 
+                case "_":  # se o proximo termo é um _
+                    while self.linha[0] == "_": #enquanto ele ler esse simbolo ele vai concatenando ao simbolo atual
+                        self.simboloAtual += self.linha.pop(0) #de acordo com a ER letra ( letra | dígito| _ )*
+                    if (self.simboloAtual != ""): #quando não for mais o simbolo _
+                        self.reservada.append(self.linha_lida)
+                        self.reservada.append("IDE")  # classifica como identificador
+                        self.reservada.append(self.simboloAtual)
+                        self.simbolos.append(self.reservada)
+                    self.resetReservada()
+                    self.resetSimbAtual()
+                    self.pularProximoSimbolo()  # pula pro proximo simbolo a ser lido
+                    self.ignoraBranco()  # volta para o estado E1
+
                 #a quebra de linha vai classificar o simbolo como identificador
                 case "\n":
                     if (self.simboloAtual != ""):
