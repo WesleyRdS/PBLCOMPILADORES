@@ -3,16 +3,6 @@ procedure start(){
 real f = 3.0;
 @
 -
-=carro
+"=carro
 ++
-texto msg = "teste
-/*
-if ( f >= -10) && (f < )
-	print("mensagem);
-	print("menÇagem");
-// exemplo de teste do lexico
-
-/* exa869 mi processadores de
-		linguagem de programacao
-
-}
+texto msg = teste

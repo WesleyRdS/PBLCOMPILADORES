@@ -1186,6 +1186,8 @@ class analisador_lexico:
         if len(self.linha) >= 1:
             match self.linha[0]:
                 case '"': #identificou novas aspas duplas
+                    if len(self.erro_caract) -1 >= 1:
+                        self.erro_caract.pop()
                     if (self.simboloAtual != ""):
                         self.simboloAtual += self.linha.pop(0)
                         self.reservada.append(self.linha_lida)
@@ -1197,13 +1199,17 @@ class analisador_lexico:
                     self.ignoraBranco()
 
                 case "\n": #caso identifique uma quebra de linha
-                    self.linha = self.lerLinha() # le uma nova linha
-                    if len(self.linha) >= 1:
-                        self.simboloAtual += self.linha.pop(0) #adiciona o o primeiro termo ao simbolo
-
+                    if(self.simboloAtual != ""):
+                        self.simboloAtual += self.linha.pop(0)
+                        self.reservada.append(self.linha_lida)
+                        self.reservada.append("CAC")  # identifica como cadeia de caractere
+                        self.reservada.append(self.simboloAtual)
+                        self.simbolos.append(self.reservada)
+                    self.resetReservada()
+                    self.resetSimbAtual()
+                    self.lerLinha() # le uma nova linha
                     self.string_state() #continua no mesmo estado
 
-                # todo outro caso continuara no mesmo estado concatenando simbolos
                 case _:
                     self.simboloAtual += self.linha.pop(0)
                     self.string_state()
@@ -1215,6 +1221,11 @@ class analisador_lexico:
             match self.linha[0]:
                 case '"': #identifica que sera uma string
                     self.simboloAtual += self.linha.pop(0)
+                    #guardando informação de cadeia de caracteres
+                    self.caract.append(self.linha_lida) #linha
+                    self.caract.append(self.simboloAtual) #aspoas
+                    self.erro_caract.append(self.caract) #ambos juntos
+                    self.caract = [] #resetando vetor temporario
                     self.string_state()
                 #caso dos delimitadores
                 case ".":
@@ -1337,18 +1348,6 @@ class analisador_lexico:
                     self.simboloAtual += self.linha.pop(0)
                     self.f_state()
 
-                #comentario mal formado
-                case " ":
-                    if (self.simboloAtual != ''):
-                        self.reservada.append(self.linha_lida)
-                        self.reservada.append("CMF")
-                        self.reservada.append(self.simboloAtual)
-                        self.simbolos.append(self.reservada)
-                    self.resetReservada()
-                    self.resetSimbAtual()
-                    self.pularProximoSimbolo()
-                    self.ignoraBranco()
-
                 #outros delimitadores
                 case ".":
                     self.simboloAtual += self.linha.pop(0)
@@ -1359,6 +1358,11 @@ class analisador_lexico:
                     self.resetReservada()
                     self.resetSimbAtual()
                     self.E1()
+
+                case "\n":
+                    self.resetReservada()
+                    self.resetSimbAtual()
+                    self.E0()
 
                 #qualquer outro caso
                 case _:
@@ -2825,6 +2829,12 @@ class analisador_lexico:
             for j in self.erro_comentario:
                 j.insert(1,"CoMF")
                 self.simbolos.append(j)
+
+    def checarErroCadeia(self):
+        if len(self.erro_caract) >= 1:
+            self.simbolos.append(self.erro_caract[0])
+            self.simbolos[-1].insert(1, "CMF")
+
 
 
 
