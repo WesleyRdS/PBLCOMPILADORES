@@ -1,3 +1,8 @@
+import sys
+sys.path.insert(1,'./FP')
+
+import parametro_function
+
 class struct_exp:
     def __init__(self, lista, linha, arquivo, classe):
         self.list = lista
@@ -61,6 +66,8 @@ class struct_exp:
         if len(self.list) > 0:
             if self.list[0] == ";":
                 self.E4()
+            if self.list[0] == "(":
+                self.E7()
             else:
                 self.E5()
         else:
@@ -109,6 +116,46 @@ class struct_exp:
                 self.E4()
         else:
             self.erro.append("ERROR: Line-final Expected: 'int', 'real', 'string' or boolean\n")
+
+
+    def E7(self):
+        print(self.list)
+        print(self.n)
+        print(self.token)
+        if len(self.list) > 0:
+            if self.list[0] == "(":
+                self.list.pop(0)
+                self.token.pop(0)
+                self.n.pop(0)
+                iniciar_automato = parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"struct_func")
+                iniciar_automato.E0()
+            else:
+                self.E3()
+        else:
+            self.E4()
+    
+    
+    def E8(self):
+        print(self.list)
+        print(self.n)
+        print(self.token)
+        if len(self.list) > 0:
+            if self.list[0] == ")":
+                self.list.pop(0)
+                self.token.pop(0)
+                self.n.pop(0)
+                self.E4()
+            else:
+                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ')'\n")
+                self.E4()
+        else:
+            self.erro.append("ERROR: Line-final Expected: ')'\n")
+            
+
+
+
+
+
 
 
 

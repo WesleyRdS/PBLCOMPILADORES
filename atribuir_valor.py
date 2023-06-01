@@ -1,6 +1,9 @@
 import sys
 sys.path.insert(1,'./exp')
 import exp_logica
+sys.path.insert(1,'./FP')
+
+import parametro_function
 
 class atribuir_valor:
     def __init__(self, lista, linha, arquivo, classe):
@@ -157,6 +160,12 @@ class atribuir_valor:
                     if self.token[0] == "ART" or self.token[0] == 'REL':
                         iniciar_automato = exp_logica.exp_logica(self.list,self.n, self.erro,self.token)
                         iniciar_automato.E3()
+                    elif self.list[0] == "(":
+                        self.list.pop(0)
+                        self.token.pop(0)
+                        self.n.pop(0)
+                        iniciar_automato = parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"atr_v")
+                        iniciar_automato.E0()
                     else:
                         self.E8()
                 else:

@@ -14,6 +14,8 @@ import exp_logica
 import atribuir_valor
 import ifthen
 import while_a
+import func
+import procedu
 #vetor_lista = ["var",   '{', "int",  "i",  "=",  "2",   ",",   "j",  "=",   "7",   ",",   "k",   "=", "5.65",   ";", "boolean",   "h",   "=" ,"true", ";","}"]
 #vetor_token = ["PRE", "DEL", "PRE","IDE","REL","NRO", "DEL", "IDE","REL", "NRO", "DEL", "IDE", "REL",  "NRO", "DEL",     "PRE", "IDE",  "REL", "PRE", "DEL", "DEL"]
 #vetor_linha = ["1"  ,   "1",   "2",  "2",  "2",  "2",   "2",   "2",  "2",   "2",   "2",   "2",   "2",    "2",   "2",       "3",   "3",    "3",   "3", "3", "4"]
