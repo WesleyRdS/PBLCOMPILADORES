@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./bloco const",
+        "./bloco var"
+    ]
+}

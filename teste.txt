@@ -1,0 +1,11 @@
+ERROR: Line-6 '(' referring to ')' not found 
+ERROR: Line-7 Read then Expected 'int', 'real' 'ide' or '('
+ERROR: Line-7 Read then Expected '==', '>=' '<=' or '!='
+ERROR: Line-7 Read then Expected 'true', 'false' 'int' or 'real'
+ERROR: Line-6 '(' referring to ')' not found 
+ERROR: Line-7 Read then Expected 'int', 'real' 'ide' or '('
+ERROR: Line-7 Read then Expected '==', '>=' '<=' or '!='
+ERROR: Line-7 Read then Expected 'true', 'false' 'int' or 'real'
+ERROR: Line-7 Read then Expected 'int', 'real' 'ide' or '('
+ERROR: Line-7 Read then Expected '==', '>=' '<=' or '!='
+ERROR: Line-7 Read then Expected 'true', 'false' 'int' or 'real'
