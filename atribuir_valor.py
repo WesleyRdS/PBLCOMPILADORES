@@ -1,16 +1,21 @@
 import sys
 sys.path.insert(1,'./exp')
-import exp_logica
+import exp.exp_logica
 sys.path.insert(1,'./FP')
-
-import parametro_function
+import FP.func
+import FP.procedu
+import if_while.ifthen
+import if_while.while_a
+import bloco_start
+import FP.parametro_function
 
 class atribuir_valor:
-    def __init__(self, lista, linha, arquivo, classe):
+    def __init__(self, lista, linha, arquivo, classe, remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
 
     def E0(self):
@@ -30,7 +35,7 @@ class atribuir_valor:
                     elif self.list[0] == "[":
                         self.E3()
                     elif self.token[0] == "REL":
-                        iniciar_automato = exp_logica.exp_logica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: IDE\n")
@@ -158,20 +163,20 @@ class atribuir_valor:
                 self.token.pop(0)
                 if len(self.list) > 0:
                     if self.token[0] == "ART" or self.token[0] == 'REL':
-                        iniciar_automato = exp_logica.exp_logica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     elif self.list[0] == "(":
                         self.list.pop(0)
                         self.token.pop(0)
                         self.n.pop(0)
-                        iniciar_automato = parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"atr_v")
+                        iniciar_automato = FP.parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"atr_v")
                         iniciar_automato.E0()
                     else:
                         self.E8()
                 else:
                     self.E8()
             elif self.list[0] == "(":
-                iniciar_automato = exp_logica.exp_logica(self.list,self.n, self.erro,self.token)
+                iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             
             else:
@@ -191,7 +196,23 @@ class atribuir_valor:
                 self.list.pop(0)
                 self.n.pop(0)
                 self.token.pop(0)
-                return self.list
+                if self.remetente == "func":
+                    iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token)
+                    iniciar_automato.E6()
+                elif self.remetente == "proc":
+                    iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token)
+                    iniciar_automato.E5()
+                elif self.remetente == "if":
+                    iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token)
+                    iniciar_automato.E5()
+                elif self.remetente == "while":
+                    iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token)
+                    iniciar_automato.E4()
+                elif self.remetente == "start":
+                    iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token)
+                    iniciar_automato.E2()
+
+
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ';'\n")
                 return self.list

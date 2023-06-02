@@ -1,4 +1,4 @@
-import parametro_const
+import constante.parametro_const
 
 class valor_variavelC:
 
@@ -17,7 +17,7 @@ class valor_variavelC:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E3()
             
             elif self.list[0] == '[':
@@ -67,7 +67,7 @@ class valor_variavelC:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E3()
 
             else:

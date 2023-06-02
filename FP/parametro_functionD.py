@@ -1,11 +1,10 @@
 import sys
 sys.path.insert(1,'./estrutura_de_dados')
-import struct_exp
-import atribuir_valor
-import func
-import procedu
 
-class parametro_function:
+import FP.func
+import FP.procedu
+
+class parametro_functionD:
     def __init__(self, lista, linha, arquivo, classe, local):
         self.list = lista
         self.erro = arquivo
@@ -56,15 +55,15 @@ class parametro_function:
                 self.token.pop(0)
                 self.n.pop(0)
                 self.E0()
-            elif self.list == ")":
+            elif self.list[0] == ")":
                 if self.destino == "func":
-                    iniciar_automato = func.func(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E4()
-                elif self.destino == "atr_v":
-                    iniciar_automato = procedu.procedu(self.list,self.n, self.erro,self.token)
+                elif self.destino == "proc":
+                    iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E3()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ',' or ')'\n")
-                self.E0()
+                
         else:
             self.erro.append("ERROR: Line-final Expected: ',' or ')'\n")

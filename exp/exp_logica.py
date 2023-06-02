@@ -1,19 +1,19 @@
 import sys
 
-import exp_aritimetica
+import exp.exp_aritimetica
 import atribuir_valor
 sys.path.insert(1,'./if_while')
-import ifthen
-import while_a
+import if_while.ifthen
+import if_while.while_a
 class exp_logica:
 
-    def __init__(self,lista,linha, arquivo,classe):
+    def __init__(self,lista,linha, arquivo,classe,remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
         self.pilha = []
-
+        self.remetente = remetente
 
     def E0(self):
         print(self.list)
@@ -63,7 +63,7 @@ class exp_logica:
                     if self.list[0] == ")":
                         self.E5()
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
 
                     else: 
@@ -91,7 +91,7 @@ class exp_logica:
                 self.E4()
 
             elif self.token[0] == "ART":
-                iniciar_automato = exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token)
+                iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E3()
             
             elif self.list[0] == ")":
@@ -118,13 +118,13 @@ class exp_logica:
                         self.token.pop(0)
                         self.E0()
                     elif self.token[0] == "ART":
-                        iniciar_automato = exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     elif self.list[0] == ")":
                         self.E5()
                     
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
 
                     else:
@@ -134,11 +134,11 @@ class exp_logica:
                     return self.list
                 
             elif self.token[0] == "ART":
-                iniciar_automato = exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token)
+                iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E3()
 
             elif self.list == ";":
-                    iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                     iniciar_automato.E8()
            
             
@@ -167,15 +167,15 @@ class exp_logica:
                     elif self.token[0] == "REL":
                         self.E3()
                     elif self.token[0] == "ART":
-                        iniciar_automato = exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     elif self.list[0] == ")":
                         self.E5()
                     elif self.list[0] == "then":
-                        iniciar_automato = ifthen.ifthen(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = if_while.ifthen(self.list,self.n, self.erro,self.token)
                         iniciar_automato.E3()
                     elif self.list[0] == "{":
-                        iniciar_automato = while_a.while_a(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = if_while.while_a(self.list,self.n, self.erro,self.token)
                         iniciar_automato.E3()
                     elif self.list[0] == "(":
                         self.erro.append("ERROR: Line-"+self.n[0]+"  Expected '==', '>=', '<=', '!=', '-', '+' '*' or '/'\n")
@@ -193,7 +193,7 @@ class exp_logica:
                     if self.list[0] == "true" or self.list[0] == "false" or self.token[0] == "NRO" or self.token[0] == "IDE":
                         self.E4()
                     elif self.token[0] == "ART":
-                        iniciar_automato = exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     elif self.token[0] == "REL":
 
@@ -205,7 +205,7 @@ class exp_logica:
                         self.E1()
                     
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
                     
                     else:

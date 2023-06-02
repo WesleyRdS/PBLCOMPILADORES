@@ -1,13 +1,25 @@
-import exp_logica
+import sys
+sys.path.insert(1,'./if_while')
+sys.path.insert(1,'./PR')
+sys.path.insert(1,'./FP')
+import exp.exp_logica
 import atribuir_valor
+import FP.func
+import FP.procedu
+import if_while.ifthen
+import if_while.while_a
+import PR.printar
+import PR.reader
+
 class exp_aritimetica:
 
-    def __init__(self,lista,linha, arquivo,classe):
+    def __init__(self,lista,linha, arquivo,classe,remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
         self.pilha = []
+        self.remetente = remetente
 
 
     def E0(self):
@@ -57,7 +69,7 @@ class exp_aritimetica:
                         self.E5()
 
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
                     else: 
                         self.E3()
@@ -113,7 +125,7 @@ class exp_aritimetica:
                         self.E5()
 
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
                     else:
                         self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '+', '-', '/', '*' or ')'\n")
@@ -141,6 +153,18 @@ class exp_aritimetica:
                 if(len(self.list)>0):
                     if self.list[0] == "ART":
                         self.E6()
+                    elif self.list[0] == "{":
+                        if self.remetente == "while":
+                            iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token)
+                            iniciar_automato.E3()
+                    elif self.list[0] == "then":
+                        if self.remetente == "if":
+                            iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token)
+                            iniciar_automato.E3()
+                    elif self.list[0] == ";":
+                        if self.remetente == "print":
+                            iniciar_automato = PR.printar.printar(self.list,self.n, self.erro,self.token)
+                            iniciar_automato.E0()
                     elif self.list[0] == ")" and len(self.pilha)> 0:
                         self.pilha.pop(0)
                         self.E5()
@@ -152,11 +176,11 @@ class exp_aritimetica:
                         self.E6()
 
                     elif self.token[0] == "REL": 
-                        iniciar_automato = exp_logica.exp_logica(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E8() 
                     else: 
                         self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '+', '-', '/' or '*'\n")

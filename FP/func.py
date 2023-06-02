@@ -5,19 +5,19 @@ sys.path.insert(1,'./estrutura_de_dados')
 sys.path.insert(1,'./exp')
 sys.path.insert(1,'./if_while')
 sys.path.insert(1,'./PR')
-import printar
-import reader
-import automato_bloco_var
-import vetor
-import struct
-import struct_exp
-import exp_aritimetica
-import exp_logica
+import PR.printar
+import PR.reader
+import variavel.automato_bloco_var
+import estrutura_de_dados.vetor
+import estrutura_de_dados.struct
+import estrutura_de_dados.struct_exp
+import exp.exp_aritimetica
+import exp.exp_logica
 import atribuir_valor
-import ifthen
-import while_a
-import parametro_functionD
-import procedu
+import if_while.ifthen
+import if_while.while_a
+import FP.parametro_functionD
+import FP.procedu
 
 
 class func:
@@ -49,7 +49,7 @@ class func:
         print(self.n)
         print(self.token)
         if len(self.list) > 0:
-            if self.list[0] == "int" and self.list[0] == "real" and self.list[0] == "string" and self.list[0] == "boolean" and self.token[0] == "IDE":
+            if self.list[0] == "int" or self.list[0] == "real" or self.list[0] == "string" or self.list[0] == "boolean" or self.token[0] == "IDE":
                 self.list.pop(0)
                 self.token.pop(0)
                 self.n.pop(0)
@@ -90,7 +90,7 @@ class func:
                     if self.list[0] == ")":
                         self.E4()
                     else:
-                        iniciar_automato = parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"func")
+                        iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"func")
                         iniciar_automato.E0()
                 else:
                     self.erro.append("ERROR: Line-final Expected: ')'\n")
@@ -99,7 +99,7 @@ class func:
                 self.E4()        
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: '('\n")
-                iniciar_automato = parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"func")
+                iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"func")
                 iniciar_automato.E0()
         else:
             self.erro.append("ERROR: Line-final Expected: '('\n")
@@ -145,31 +145,31 @@ class func:
         print(self.token)
         if len(self.list) > 0:
             if self.list[0] == "var":
-                iniciar_automato = automato_bloco_var.automato_bloco_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0() 
             elif self.token[0] == "IDE":
-                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
+                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,"func")
                 iniciar_automato.E0()
             elif self.list[0] == "if":
-                iniciar_automato = ifthen.ifthen(self.list,self.n, self.erro,self.token)
+                iniciar_automato = if_while.ifthen(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
             elif self.list[0] == "while":
-                iniciar_automato =while_a.while_a(self.list,self.n, self.erro,self.token)
+                iniciar_automato = if_while.while_a(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
             elif self.list[0] == "struct":
-                iniciar_automato = struct.struct(self.list,self.n, self.erro,self.token)
+                iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
             elif self.list[0] == "procedure":
-                iniciar_automato = procedu.procedu(self.list,self.n, self.erro,self.token)
+                iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
-            elif self.list == "function":
-                iniciar_automato = func.func(self.list,self.n, self.erro,self.token)
+            elif self.list[0] == "function":
+                iniciar_automato = func(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
-            elif self.list == "print":
-                iniciar_automato = printar.printar(self.list,self.n, self.erro,self.token)
+            elif self.list[0] == "print":
+                iniciar_automato = PR.printar.printar(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
-            elif self.list == "read":
-                iniciar_automato = reader.reader(self.list,self.n, self.erro,self.token)
+            elif self.list[0] == "read":
+                iniciar_automato = PR.reader.reader(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
             else:
                 self.E7()
@@ -208,8 +208,27 @@ class func:
         else:
             self.erro.append("ERROR: Line-final Expected 'IDE', 'int', 'real', 'true', 'false' or 'string'\n")
 
-    
     def E9(self):
+        print(self.list)
+        print(self.n)
+        print(self.token)
+        if(len(self.list)>0):
+            match self.list[0]:
+                case ";":
+                    self.list.pop(0)
+                    self.n.pop(0)
+                    self.token.pop(0)
+                    self.E10()
+                    
+                case _:
+                    self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ';'\n")
+                    self.E10()
+                 
+        else:
+            self.erro.append("ERROR: Line-final Expected ';'\n")
+
+
+    def E10(self):
         print(self.list)
         print(self.n)
         print(self.token)

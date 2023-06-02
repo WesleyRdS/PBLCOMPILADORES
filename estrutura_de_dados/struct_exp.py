@@ -1,8 +1,7 @@
 import sys
 sys.path.insert(1,'./FP')
 
-import parametro_function
-
+import FP.parametro_function
 class struct_exp:
     def __init__(self, lista, linha, arquivo, classe):
         self.list = lista
@@ -127,7 +126,7 @@ class struct_exp:
                 self.list.pop(0)
                 self.token.pop(0)
                 self.n.pop(0)
-                iniciar_automato = parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"struct_func")
+                iniciar_automato = FP.parametro_function.parametro_function(self.list,self.n, self.erro,self.token,"struct_func")
                 iniciar_automato.E0()
             else:
                 self.E3()

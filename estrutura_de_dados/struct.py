@@ -1,4 +1,4 @@
-import struct_var
+import estrutura_de_dados.struct_var
 
 
 class struct:
@@ -62,7 +62,7 @@ class struct:
         print(self.token)
         if len(self.list) > 0:
             if self.list[0] == "int" or self.list[0] == "real" or self.list[0] == "string" or self.list[0] == "boolean" or self.list[0] == "true" or self.list[0] == "false" or self.token[0] == "NRO" or self.token[0] == "IDE":
-                iniciar_automato = struct_var.struct_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = estrutura_de_dados.struct_var.struct_var(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E0()
             else:
                 self.E4()

@@ -1,4 +1,4 @@
-import parametro_const
+import constante.parametro_const
 
 
 class parametro_vetorC:
@@ -35,12 +35,12 @@ class parametro_vetorC:
                     self.list.pop(0)
                     self.n.pop(0)
                     self.token.pop(0)
-                    iniciar_automato = parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E2()
                 
                 case _:
                     self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ']' \n")
-                    iniciar_automato = parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E2()
         else:
             self.erro.append("ERROR: Line-final Expected ']' \n")

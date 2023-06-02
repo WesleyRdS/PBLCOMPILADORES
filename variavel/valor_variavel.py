@@ -1,4 +1,4 @@
-import parametro_var
+import variavel.parametro_var
 
 class valor_variavel:
 
@@ -17,7 +17,7 @@ class valor_variavel:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E2()
             
             elif self.list[0] == '[':
@@ -67,7 +67,7 @@ class valor_variavel:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
                 iniciar_automato.E2()
             
             else:

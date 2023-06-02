@@ -4,17 +4,9 @@ sys.path.insert(1,'./bloco_var')
 sys.path.insert(1,'./estrutura_de_dados')
 sys.path.insert(1,'./exp')
 sys.path.insert(1,'./if_while')
-import automato_bloco_var
-import vetor
-import struct
-import struct_exp
-import exp_aritimetica
-import exp_logica
+
 import atribuir_valor
-import ifthen
-import while_a
-import parametro_functionD
-import func
+
 
 class reader:
     def __init__(self, lista, linha, arquivo, classe):

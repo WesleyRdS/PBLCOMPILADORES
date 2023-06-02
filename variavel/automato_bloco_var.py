@@ -1,5 +1,4 @@
-
-import parametro_var
+import variavel.parametro_var
 
 class bloco_var:
     def __init__(self, lista, linha, arquivo,classe):
@@ -58,7 +57,7 @@ class bloco_var:
                     #se tiver declaração de inteiro, real, booleano ou string ou o proprio valor vai para o automato de paramatros das variaveis
                     #La checara se a forma sintatica do parametro do bloco esta correta 
                     if self.list[0] == 'true' or self.list[0] == 'false' or self.token[0] == "IDE" or self.token == "NRO" or self.list[0] == 'int' or self.list[0] == 'boolean' or self.list[0] == 'string' or self.list[0] == 'real':
-                        iniciar_automato = parametro_var.parametro_var(self.list, self.n, self.erro, self.token)
+                        iniciar_automato = variavel.parametro_var.parametro_var(self.list, self.n, self.erro, self.token)
                         iniciar_automato.E0()
 
                     else:

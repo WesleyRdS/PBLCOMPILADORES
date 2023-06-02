@@ -1,6 +1,6 @@
 import sys
 sys.path.insert(1,'./estrutura_de_dados')
-import struct_exp
+import estrutura_de_dados.struct_exp
 import atribuir_valor
 
 class parametro_function:
@@ -38,9 +38,9 @@ class parametro_function:
                 self.token.pop(0)
                 self.n.pop(0)
                 self.E0()
-            elif self.list == ")":
+            elif self.list[0] == ")":
                 if self.destino == "struct_func":
-                    iniciar_automato = struct_exp.struct_exp(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = estrutura_de_dados.struct_exp.struct_exp(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E8()
                 elif self.destino == "atr_v":
                     self.list.pop(0)

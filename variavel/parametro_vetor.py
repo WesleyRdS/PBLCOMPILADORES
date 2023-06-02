@@ -1,4 +1,4 @@
-import parametro_var
+import variavel.parametro_var
 
 
 class parametro_vetor:
@@ -35,12 +35,12 @@ class parametro_vetor:
                     self.list.pop(0)
                     self.n.pop(0)
                     self.token.pop(0)
-                    iniciar_automato = parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E2()
                 
                 case _:
                     self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ']' \n")
-                    iniciar_automato = parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E2()
         else:
             self.erro.append("ERROR: Line-final Expected ']' \n")

@@ -1,5 +1,5 @@
 
-import struct
+import estrutura_de_dados.struct
 
 class struct_var:
     def __init__(self, lista, linha, arquivo, classe):
@@ -53,7 +53,7 @@ class struct_var:
                 if self.list[0] ==  "int" or self.list[0] == "real" or self.list[0] == "string" or self.list[0] == "boolean" or self.token[0] == "IDE":
                     self.E0()
                 else:
-                    iniciar_automato = struct.struct(self.list,self.n, self.erro,self.token)
+                    iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token)
                     iniciar_automato.E4()
             elif self.list[0] == "[":
                 self.list.pop(0)
@@ -66,9 +66,14 @@ class struct_var:
                 self.token.pop(0)
                 self.n.pop(0)
                 self.E1()
+            
             else:
-                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ',', '[' or ';'\n")
-                self.E2()
+                if self.list[0] == "real" or self.list[0] == "int" or self.list[0] == boolean or self.list[0] == "string":
+                    self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ';'\n")
+                    self.E0()
+                else:
+                    self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ',', '[' or ';'\n")
+                    self.E2()
         else:
             self.erro.append("ERROR: Line-final Expected: ',', '[' or ';'\n")
     

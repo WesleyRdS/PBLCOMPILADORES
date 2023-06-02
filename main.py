@@ -1,33 +1,116 @@
-import sys
-sys.path.insert(1,'./bloco_const')
+import os
+caminho = r""+os.path.dirname(os.path.realpath(__file__))+"\\files"
+os.chdir(caminho)
+import sys 
+sys.path.insert(1,'./constante')
 sys.path.insert(1,'./bloco_var')
 sys.path.insert(1,'./estrutura_de_dados')
 sys.path.insert(1,'./exp')
 sys.path.insert(1,'./if_while')
-import automato_bloco_const
-import automato_bloco_var
-import vetor
-import struct
-import struct_exp
-import exp_aritimetica
-import exp_logica
-import atribuir_valor
-import ifthen
-import while_a
-import func
-import procedu
+sys.path.insert(1,'./PR')
+sys.path.insert(1,'./FP')
+import constante.automato_bloco_const
+
+import variavel.automato_bloco_var
+
+import estrutura_de_dados.struct
+
+import FP.func
+import FP.procedu
+
+import bloco_start
 import analizador_lexico
+import analizador_sintatico
+
 
 #vetor_lista = ["var",   '{', "int",  "i",  "=",  "2",   ",",   "j",  "=",   "7",   ",",   "k",   "=", "5.65",   ";", "boolean",   "h",   "=" ,"true", ";","}"]
 #vetor_token = ["PRE", "DEL", "PRE","IDE","REL","NRO", "DEL", "IDE","REL", "NRO", "DEL", "IDE", "REL",  "NRO", "DEL",     "PRE", "IDE",  "REL", "PRE", "DEL", "DEL"]
 #vetor_linha = ["1"  ,   "1",   "2",  "2",  "2",  "2",   "2",   "2",  "2",   "2",   "2",   "2",   "2",    "2",   "2",       "3",   "3",    "3",   "3", "3", "4"]
 
 
-teste = analizador_lexico.analizador_lexico("teste.txt")
-teste.E0()
-escrever = open("saida.txt", "a")
-for lin in teste.simbolos:
-  escrever.write(str(lin[0]) + ", " + lin[1] + ", " + lin[2] + "\n")
+termo = []
+identificador = []
+l = []
+
+for arq in os.listdir():
+  if arq.endswith(".txt") and not(arq.endswith("-saida.txt")) and not(arq.endswith("-saida_sintatica.txt")):
+    caminho_lido = f"{caminho}\{arq}"
+    teste = analizador_lexico.analizador_lexico(caminho_lido)
+    teste.E0()
+    arq = arq.replace(".txt","-saida.txt")
+    caminho_saida = f"{caminho}\{arq}"
+    escrever = open(caminho_saida, "a")
+    for lin in teste.simbolos:
+      escrever.write(str(lin[0]) + ", " + lin[1] + ", " + lin[2] + "\n")
+
+for arq in os.listdir():
+  if arq.endswith("-saida.txt") and not(arq.endswith("-saida_sintatica.txt")):
+    caminho_saida = f"{caminho}\{arq}"
+    sintaxe = analizador_sintatico.analizador_sintatico(caminho_saida)
+    sintaxe.lerArquivo()
+    arq = arq.replace("-saida.txt","-saida_sintatica.txt")
+    caminho_saida = f"{caminho}\{arq}"
+    saida = []
+    termo = sintaxe.linha
+    identificador = sintaxe.identificacao
+    l = sintaxe.LinhaAtual
+    if len(termo) > 0:
+      if sintaxe.linha[0] == "var":
+        automato = variavel.automato_bloco_var.bloco_var(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+      elif sintaxe.linha[0] == "const":
+        automato = constante.automato_bloco_const.bloco_const(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+      elif sintaxe.linha[0] == "procedure":
+        automato = FP.procedu.procedu(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+      elif sintaxe.linha[0] == "function":
+        automato = FP.func.func(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+      elif sintaxe.linha[0] == "struct":
+        automato = estrutura_de_dados.struct.struct(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+      else:
+        automato = bloco_start.bloco_start(termo, l, saida, identificador)
+        automato.E0()
+        termo = automato.list
+        l = automato.n
+        saida = automato.erro
+        identificador = automato.token
+
+  
+
+
+  
+
+
+
+    
+  
+
+        
+
+    
 
 
 
