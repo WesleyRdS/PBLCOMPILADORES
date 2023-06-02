@@ -1,7 +1,7 @@
 import string
 
 
-class analisador_lexico:
+class analizador_lexico:
 
     def __init__(self, arquivo):
         self.LinhaAtual = [] #vetor com todas as letras da linha lida
@@ -1159,10 +1159,10 @@ class analisador_lexico:
                     self.ignoraBranco()
 
     def chaves_state(self):
-        if len(self.linha) >= 1:
+        if len(self.linha) > 0:
             match self.linha[0]:
                 case "\n":
-                    if (self.simboloAtual != ''):
+                    if (self.simboloAtual != ""):
                         self.reservada.append(self.linha_lida)
                         self.reservada.append("DEL")
                         self.reservada.append(self.simboloAtual)
@@ -1181,6 +1181,12 @@ class analisador_lexico:
                     self.resetSimbAtual()
                     self.pularProximoSimbolo()
                     self.ignoraBranco()
+        else:
+           if (self.simboloAtual != ""):
+                self.reservada.append(self.linha_lida)
+                self.reservada.append("DEL")
+                self.reservada.append(self.simboloAtual)
+                self.simbolos.append(self.reservada) 
 
     #Só é possivel chegar nesse estado a partir da leitura previa de aspas duplas
     def string_state(self): # estado de cadeia de caracteres
@@ -1237,7 +1243,7 @@ class analisador_lexico:
                     self.ponto_state()
                 case "(":
                     self.simboloAtual += self.linha.pop(0)
-                    self.chaves_state()
+                    self.parenteses_state()
                 case ")":
                     self.simboloAtual += self.linha.pop(0)
                     self.parenteses_state()
