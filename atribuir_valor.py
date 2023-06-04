@@ -224,6 +224,8 @@ class atribuir_valor:
                     elif self.token[0] == "ART":
                         iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
+                    elif self.list[0] == "[":
+                        self.E3()
                         
                     elif self.list[0] == "(":
                         self.list.pop(0)
@@ -332,7 +334,29 @@ class atribuir_valor:
 
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ';'\n")
-                if len(self.list) > 0:
+                if len(self.remetente) > 0 and len(self.list)>0:
+                    if self.remetente[0] == "func":
+                        self.remetente.pop(0)
+                        iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E6()
+                    elif self.remetente[0] == "proc":
+                        self.remetente.pop(0)
+                        iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E5()
+                    elif self.remetente[0] == "if":
+                        self.remetente.pop(0)
+                        iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E5()
+                    elif self.remetente[0] == "while":
+                        self.remetente.pop(0)
+                        iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E4()
+                    elif self.remetente[0] == "start":
+                        self.remetente.pop(0)
+                        iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E2()
+
+                elif len(self.list) > 0:
                     if self.list[0] == "var":
                         iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token, self.remetente)
                         iniciar_automato.E0()

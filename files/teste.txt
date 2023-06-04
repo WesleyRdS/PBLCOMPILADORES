@@ -1,11 +1,11 @@
 var{
     int a = 0;
     int b[5][3];
-    real resultado
+    real resultado;
 }
 
 const{
-    int pi = 3.14
+    int pi = 3.14;
 }
 function int somar( int x){
         resutado = a + pi;
@@ -17,13 +17,15 @@ start{
         int i = 0;
         real soma = 0;
     }
-    while(i <= 10){
-        if(soma/2 == pi) then{
-            soma = soma - 1.07;
+    while((i+2) <= 10){
+        if(soma/2 == (pi-3)) then{
+            soma = soma - 1.07
         } else{
             soma = somar(py);
         }
-        i++;
+        a= (i+2)/3;
+        a = c[5][4];
+
     }
     print(soma);
 }

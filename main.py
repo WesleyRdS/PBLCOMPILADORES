@@ -106,6 +106,10 @@ for arq in os.listdir():
         identificador = automato.token
         saida_erros = automato.erro
       with open(caminho_saida, "a") as escrever:
+        if len(saida_erros) == 0:
+          escrever.write("Compilation success: No errors")
+        else:
+          escrever.write("Errors found: \n")
         for i in saida_erros:
           escrever.write(i)
 

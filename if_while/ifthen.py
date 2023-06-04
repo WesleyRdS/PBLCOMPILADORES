@@ -17,6 +17,7 @@ import if_while.while_a
 import FP.func
 import FP.procedu
 import bloco_start
+import exp.parenteses
 
 
 class ifthen:
@@ -56,7 +57,7 @@ class ifthen:
             match self.list[0]:
                 case "(":
                     self.remetente.insert(0,"if")
-                    iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
+                    iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
                     iniciar_automato.E0()
                 case _:
                     self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '('\n")

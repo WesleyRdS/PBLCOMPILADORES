@@ -5,6 +5,7 @@ import atribuir_valor
 sys.path.insert(1,'./if_while')
 import if_while.ifthen
 import if_while.while_a
+import exp.parenteses
 class exp_logica:
 
     def __init__(self,lista,linha, arquivo,classe,remetente):
@@ -12,7 +13,7 @@ class exp_logica:
         self.erro = arquivo
         self.n = linha
         self.token = classe
-        self.pilha = []
+        self.pilha = ''
         self.remetente = remetente
 
     def E0(self):
@@ -24,8 +25,6 @@ class exp_logica:
                 self.E2()
             elif self.list[0] == "(":
                 self.E1()
-            elif self.list[0] == ")":
-                self.E5()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected 'int', 'real' 'ide' or '('\n")
                 self.E3()
@@ -39,11 +38,9 @@ class exp_logica:
         print(self.token)
         if(len(self.list)>0):
             if self.list[0] == "(":
-                self.token.pop(0)
-                self.list.pop(0)
-                self.n.pop(0)
-                self.pilha.append(")")
-                self.E2()
+                self.remetente.insert(0,"log")
+                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                iniciar_automato.E0()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '('\n")
                 self.E2()
@@ -59,21 +56,85 @@ class exp_logica:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                if len(self.list) > 0:
-                    if self.list[0] == ")":
-                        self.E5()
-                    elif self.list[0] == ";":
+                if len(self.list) > 0 and len(self.remetente) > 0:
+                    if self.list[0] == ")" and self.remetente[0] == "par":
+                        self.remetente.pop(0)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+                    elif (self.list[0] == "{" or self.list[0] == "then") and self.remetente[0] == "par":
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                        self.pilha = self.remetente.pop(0)
+                        self.list.insert(0,self.pilha)
+                        self.token.insert(0,self.pilha)
+                        self.n.insert(0,self.pilha)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+                    elif self.list[0] == ")" and self.remetente[0] != "par":
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+                    elif self.list[0] == ";" and self.remetente[0] != "par":
                         iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E8() 
+                        iniciar_automato.E8()
+                    elif self.list[0] == ";" and self.remetente[0] == "par":
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                        self.pilha = self.remetente.pop(0)
+                        self.list.insert(0,self.pilha)
+                        self.token.insert(0,self.pilha)
+                        self.n.insert(0,self.pilha)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
 
+                    elif self.list[0] == '(':
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '>=', '<=', '==', or '!=''\n")
+                        self.E3()
                     else: 
                         self.E3()
+                elif self.list[0] == ")":
+                    if len(self.remetente) > 0: 
+                        if self.remetente[0] == 'par':
+                            self.remetente.pop(0)
+                            iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                            iniciar_automato.E1()
+                        else:
+                            self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
+                            iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                            iniciar_automato.E1()
+                elif self.list[0] == "{" or self.list[0] == "then":
+                    if len(self.remetente) > 0: 
+                        if self.remetente[0] == "par":
+                            self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                            self.pilha = self.remetente.pop(0)
+                            self.list.insert(0,self.pilha)
+                            self.token.insert(0,self.pilha)
+                            self.n.insert(0,self.pilha)
+                            iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                            iniciar_automato.E1()
                 else:
                     self.E3()
+
             elif self.list[0] == ")":
-                self.E5()   
+                if len(self.remetente) > 0: 
+                    if self.remetente[0] == 'par':
+                        self.remetente.pop(0)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+                    else:
+                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+            elif self.list[0] == "{" or self.list[0] == "then":
+                if len(self.remetente) > 0: 
+                    if self.remetente[0] == "par":
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                        self.pilha = self.remetente.pop(0)
+                        self.list.insert(0,self.pilha)
+                        self.token.insert(0,self.pilha)
+                        self.n.insert(0,self.pilha)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+
             else:
-                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected 'int', 'real' 'ide'\n")
+                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected 'int', 'real', 'boolean' or 'ide'\n")
                 self.E3()
 
         else:
@@ -88,14 +149,60 @@ class exp_logica:
                 self.list.pop(0)
                 self.n.pop(0)
                 self.token.pop(0)
-                self.E4()
+                if len(self.list) > 0:
+                    if self.list[0] == "(":
+                        self.E1()
+                    elif self.list[0] == ")":
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected 'int', 'real', 'boolean' or 'ide'\n")
+                        if len(self.remetente) > 0:
+                            if self.remetente[0] == "par":
+                                self.remetente.pop(0)
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+                            else:
+                                self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+                    elif self.list[0] == "{" or self.list[0] == "then":
+                        if len(self.remetente) > 0: 
+                            if self.remetente[0] == "par":
+                                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                                self.pilha = self.remetente.pop(0)
+                                self.list.insert(0,self.pilha)
+                                self.token.insert(0,self.pilha)
+                                self.n.insert(0,self.pilha)
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+
+                    else:
+                        self.E4()
+                else:
+                    self.E4()
 
             elif self.token[0] == "ART":
                 iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E3()
             
             elif self.list[0] == ")":
-                self.E5()
+                if len(self.remetente) > 0:
+                    if self.remetente[0] == "par":
+                        self.remetente.pop(0)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+                    else:
+                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
+            elif self.list[0] == "{" or self.list[0] == "then":
+                if len(self.remetente) > 0: 
+                    if self.remetente[0] == "par":
+                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                        self.pilha = self.remetente.pop(0)
+                        self.list.insert(0,self.pilha)
+                        self.token.insert(0,self.pilha)
+                        self.n.insert(0,self.pilha)
+                        iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                        iniciar_automato.E1()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+ " Expected '==', '>=' '<=' or '!='\n")
                 self.E4()
@@ -121,17 +228,48 @@ class exp_logica:
                         iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
                         iniciar_automato.E3()
                     elif self.list[0] == ")":
-                        self.E5()
-                    
+                        if len(self.remetente) > 0:
+                            if self.remetente[0] == "par":
+                                self.remetente.pop(0)
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+                            else:
+                                self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+                    elif self.list[0] == "{" or self.list[0] == "then":
+                        if len(self.remetente) > 0: 
+                            if self.remetente[0] == "par":
+                                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                                self.pilha = self.remetente.pop(0)
+                                self.list.insert(0,self.pilha)
+                                self.token.insert(0,self.pilha)
+                                self.n.insert(0,self.pilha)
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+            
                     elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E8() 
+                        if len(self.remetente) > 0:
+                            if self.remetente[0] == "par":
+                                self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ')'\n")
+                                self.pilha = self.remetente.pop(0)
+                                self.list.insert(0,self.pilha)
+                                self.token.insert(0,self.pilha)
+                                self.n.insert(0,self.pilha)
+                                iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E1()
+                            else:
+                                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
+                                iniciar_automato.E8()
+                        else:        
+                            iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
+                            iniciar_automato.E8() 
 
                     else:
                         self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+ " Expected '==', '>=' '<=' or '!='\n")
                         self.E0()
                 else:
-                    return self.list
+                    self.erro.append("ERROR: Line-final Expected '==', '>=' '<=' or '!='\n")
                 
             elif self.token[0] == "ART":
                 iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
@@ -144,6 +282,8 @@ class exp_logica:
             
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+ " Expected 'true', 'false' 'int' or 'real'\n")
+                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
+                iniciar_automato.E8()
           
         else:
             self.erro.append("ERROR: Line-final Expected 'true', 'false' 'int' or 'real'\n")
@@ -151,111 +291,4 @@ class exp_logica:
 
 
 
-    def E5(self):
-        print(self.list)
-        print(self.n)
-        print(self.token)
-        if len(self.token)>0:
-            if self.list[0] == ")" and len(self.pilha) > 0:
-                self.pilha.pop(0)
-                self.token.pop(0)
-                self.list.pop(0)
-                self.n.pop(0)
-                self.E5()
-            elif self.list[0] == ")" and len(self.pilha) == 0:
-                self.token.pop(0)
-                self.list.pop(0)
-                self.n.pop(0)
-                if len(self.token)>0:
-                    if self.token[0] == "REL":
-                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
-                        self.E3()
-            
-                    elif self.list[0] == "then":
-                        if len(self.remetente) > 0:
-                            if self.remetente[0] == "if":
-                                self.remetente.pop(0)
-                                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                            else:
-                                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                        else:
-                            iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                            iniciar_automato.E3()
-
-                    elif self.list[0] == "{":
-                        if len(self.remetente) > 0:
-                            if self.remetente[0] == "while":
-                                self.remetente.pop(0)
-                                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                            else:
-                                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                        else:
-                            iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                            iniciar_automato.E3()
-                    elif self.token[0] == "ART":
-                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
-                        iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E3()
-                        
-                    elif self.list[0] == ";":
-                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E8() 
-                    else:
-                        self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
-                        self.E0()
-                else:
-                    self.erro.append("ERROR: Line-"+self.n[0]+" '(' referring to ')' not found \n")
-               
-
-            else:
-                if len(self.token)>0:
-                    if self.token[0] == "REL":
-                        self.E3()
-            
-                    elif self.list[0] == "then":
-                        if len(self.remetente) > 0:
-                            if self.remetente[0] == "if":
-                                self.remetente.pop(0)
-                                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                            else:
-                                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                        else:
-                            iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
-                            iniciar_automato.E3()
-
-                    elif self.list[0] == "{":
-                        if len(self.remetente) > 0:
-                            if self.remetente[0] == "while":
-                                self.remetente.pop(0)
-                                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                            else:
-                                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                                iniciar_automato.E3()
-                        else:
-                            iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
-                            iniciar_automato.E3()
-                    elif self.token[0] == "ART":
-                        iniciar_automato = exp.exp_aritimetica.exp_aritimetica(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E3()
-                        
-                    elif self.list[0] == ";":
-                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
-                        iniciar_automato.E8() 
-                    
-                    else:
-                        self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected ';', '==', '>=' '<=', '!=', '+', '-', '*' or '/' \n")
-                        self.E0()
-                else:
-                    return self.list
-                    
-     
-        else:
-            return self.list
+    

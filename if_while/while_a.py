@@ -17,6 +17,7 @@ import if_while.ifthen
 import FP.func
 import FP.procedu
 import bloco_start
+import exp.parenteses
 
 
 class while_a:
@@ -54,7 +55,7 @@ class while_a:
             match self.list[0]:
                 case "(":
                     self.remetente.insert(0,'while')
-                    iniciar_automato = exp.exp_logica.exp_logica(self.list,self.n, self.erro,self.token,self.remetente)
+                    iniciar_automato = exp.parenteses.parenteses(self.list,self.n, self.erro,self.token,self.remetente)
                     iniciar_automato.E0()
                 case _:
                     self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '('\n")
@@ -146,7 +147,6 @@ class while_a:
         print(self.n)
         print(self.token)
         if(len(self.list)>0):
-            print("aquiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii--"+self.list[0])
             match self.list[0]:
                 case "}":
                     self.list.pop(0)
