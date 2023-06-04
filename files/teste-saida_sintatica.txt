@@ -1,2 +1,0 @@
-Errors found: 
-ERROR: Line-23 Read } Expected: ';'
