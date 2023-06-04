@@ -1,0 +1,2 @@
+ERROR: Line-5 Read } Expected ';', ',', '=' or '['
+ERROR: Line-9 Read }Expected ';' 

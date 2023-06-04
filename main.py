@@ -39,11 +39,12 @@ for arq in os.listdir():
     teste.E0()
     arq = arq.replace(".txt","-saida.txt")
     caminho_saida = f"{caminho}\{arq}"
-    escrever = open(caminho_saida, "a")
-    for lin in teste.simbolos:
-      escrever.write(str(lin[0]) + ", " + lin[1] + ", " + lin[2] + "\n")
+    with open(caminho_saida, "a") as escrever:
+      for lin in teste.simbolos:
+        escrever.write(str(lin[0]) + ", " + lin[1] + ", " + lin[2] + "\n")
 
 for arq in os.listdir():
+  saida_erros = []
   if arq.endswith("-saida.txt") and not(arq.endswith("-saida_sintatica.txt")):
     caminho_saida = f"{caminho}\{arq}"
     sintaxe = analizador_sintatico.analizador_sintatico(caminho_saida)
@@ -53,50 +54,61 @@ for arq in os.listdir():
     saida = []
     termo = sintaxe.linha
     identificador = sintaxe.identificacao
+    remetente = []
     l = sintaxe.LinhaAtual
     if len(termo) > 0:
-      if sintaxe.linha[0] == "var":
-        automato = variavel.automato_bloco_var.bloco_var(termo, l, saida, identificador)
+      if termo[0] == "var":
+        automato = variavel.automato_bloco_var.bloco_var(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
-      elif sintaxe.linha[0] == "const":
-        automato = constante.automato_bloco_const.bloco_const(termo, l, saida, identificador)
+        saida_erros = automato.erro
+      elif termo[0] == "const":
+        automato = constante.automato_bloco_const.bloco_const(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
-      elif sintaxe.linha[0] == "procedure":
-        automato = FP.procedu.procedu(termo, l, saida, identificador)
+        saida_erros = automato.erro
+      elif termo[0] == "procedure":
+        automato = FP.procedu.procedu(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
-      elif sintaxe.linha[0] == "function":
-        automato = FP.func.func(termo, l, saida, identificador)
+        saida_erros = automato.erro
+      elif termo[0] == "function":
+        automato = FP.func.func(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
-      elif sintaxe.linha[0] == "struct":
-        automato = estrutura_de_dados.struct.struct(termo, l, saida, identificador)
+        saida_erros = automato.erro
+      elif termo[0] == "struct":
+        automato = estrutura_de_dados.struct.struct(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
+        saida_erros = automato.erro
       else:
-        automato = bloco_start.bloco_start(termo, l, saida, identificador)
+        automato = bloco_start.bloco_start(termo, l, saida, identificador,remetente)
         automato.E0()
         termo = automato.list
         l = automato.n
         saida = automato.erro
         identificador = automato.token
+        saida_erros = automato.erro
+      with open(caminho_saida, "a") as escrever:
+        for i in saida_erros:
+          escrever.write(i)
+
 
   
 

@@ -56,12 +56,15 @@ class parametro_functionD:
                 self.n.pop(0)
                 self.E0()
             elif self.list[0] == ")":
-                if self.destino == "func":
-                    iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token)
-                    iniciar_automato.E4()
-                elif self.destino == "proc":
-                    iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token)
-                    iniciar_automato.E3()
+                if len(self.destino) > 0:
+                    if self.destino[0] == "func":
+                        self.destino.pop(0)
+                        iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token,self.destino)
+                        iniciar_automato.E4()
+                    elif self.destino[0] == "proc":
+                        self.destino.pop(0)
+                        iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token,self.destino)
+                        iniciar_automato.E3()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ',' or ')'\n")
                 

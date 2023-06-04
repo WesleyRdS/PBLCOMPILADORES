@@ -18,13 +18,16 @@ import if_while.ifthen
 import if_while.while_a
 import FP.parametro_functionD
 import FP.func
+import bloco_start
+import constante.automato_bloco_const
 
 class procedu:
-    def __init__(self, lista, linha, arquivo, classe):
+    def __init__(self, lista, linha, arquivo, classe, remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
     def E0(self):
         print(self.list)
@@ -74,7 +77,8 @@ class procedu:
                     if self.list[0] == ")":
                         self.E3()
                     else:
-                        iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"proc")
+                        self.remetente.insert(0,"proc")
+                        iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token, self.remetente)
                         iniciar_automato.E0()
                 else:
                     self.erro.append("ERROR: Line-final Expected: ')'\n")
@@ -83,7 +87,8 @@ class procedu:
                 self.E3()        
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: '('\n")
-                iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,"proc")
+                self.remetente.insert(0,"proc")
+                iniciar_automato = FP.parametro_functionD.parametro_functionD(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
         else:
             self.erro.append("ERROR: Line-final Expected: '('\n")
@@ -129,31 +134,39 @@ class procedu:
         print(self.token)
         if len(self.list) > 0:
             if self.list[0] == "var":
-                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0() 
             elif self.token[0] == "IDE":
-                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,"proc")
+                self.remetente.insert(0,"proc")
+                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "if":
-                iniciar_automato = if_while.ifthen(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "while":
-                iniciar_automato = if_while.while_a(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "struct":
-                iniciar_automato = estrutura_de_dados.struct(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = estrutura_de_dados.struct(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "procedure":
-                iniciar_automato = procedu(self.list,self.n, self.erro,self.token)
-                iniciar_automato.E0()
+                self.remetente.insert(0,"proc")
+                self.E0()
             elif self.list[0] == "function":
-                iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "print":
-                iniciar_automato = PR.printar(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = PR.printar(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "read":
-                iniciar_automato = PR.reader(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"proc")
+                iniciar_automato = PR.reader(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E0()
             else:
                 self.E6()
@@ -171,9 +184,89 @@ class procedu:
                     self.list.pop(0)
                     self.n.pop(0)
                     self.token.pop(0)
+                    if len(self.remetente) > 0 and len(self.list)>0:
+                        if self.remetente[0] == "func":
+                            self.remetente.pop(0)
+                            iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token, self.remetente)
+                            self.E6()
+                        elif self.remetente[0] == "proc":
+                            self.remetente.pop(0)
+                            self.E5()
+                        elif self.remetente[0] == "start":
+                            self.remetente.pop(0)
+                            iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E2()
+                        elif self.remetente[0] == "if":
+                            self.remetente.pop(0)
+                            iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E5()
+                        elif self.remetente[0] == "while":
+                            self.remetente.pop(0)
+                            iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E4()
+                        elif self.remetente[0] == "struct":
+                            self.remetente.pop(0)
+                            iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E5()
+                        
+        
+                        elif self.list[0] == "var":
+                            iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E0()
+                        elif self.list[0] == "const":
+                            iniciar_automato = constante.automato_bloco_const.bloco_const(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E0()
+                        elif self.list[0] == "procedure":
+                            self.E0()
+                        elif self.list[0] == "function":
+                            iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E0()
+                        elif self.list[0] == "struct":
+                            iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E0()
+                        else:
+                            iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token, self.remetente)
+                            iniciar_automato.E0()
+
+                    else:
+                        if len(self.list)>0:
+                            if self.list[0] == "var":
+                                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token, self.remetente)
+                                iniciar_automato.E0()
+                            elif self.list[0] == "procedure":
+                                self.E0()
+                            elif self.list[0] == "function":
+                                iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token, self.remetente)
+                                iniciar_automato.E0()
+                            elif self.list[0] == "struct":
+                                iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token, self.remetente)
+                                iniciar_automato.E0()
+                            elif self.list[0] == "const":
+                                iniciar_automato = constante.automato_bloco_const.bloco_const(self.list,self.n, self.erro,self.token, self.remetente)
+                                iniciar_automato.E0()
+                            else:
+                                iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token, self.remetente)
+                                iniciar_automato.E0()
                     
                 case _:
                     self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected '}'\n")
+                    if self.list[0] == "var":
+                        iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token, self.remetente)
+                        iniciar_automato.E0()
+                    elif self.list[0] == "procedure":
+                        self.E0()
+                    elif self.list[0] == "function":
+                        iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token, self.remetente)
+                        iniciar_automato.E0()
+                    elif self.list[0] == "struct":
+                        iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token, self.remetente)
+                        iniciar_automato.E0()
+                    elif self.list[0] == "const":
+                        iniciar_automato = constante.automato_bloco_const.bloco_const(self.list,self.n, self.erro,self.token, self.remetente)
+                        iniciar_automato.E0()
+                    else:
+                        iniciar_automato = bloco_start.bloco_start(self.list,self.n, self.erro,self.token, self.remetente)
+                        iniciar_automato.E0()
                  
         else:
             self.erro.append("ERROR: Line-final Expected '}'\n")

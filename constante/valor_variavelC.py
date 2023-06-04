@@ -2,11 +2,12 @@ import constante.parametro_const
 
 class valor_variavelC:
 
-    def __init__(self,lista,linha, arquivo,classe):
+    def __init__(self,lista,linha, arquivo,classe,remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
     def E0(self):
         print(self.list)
@@ -17,7 +18,7 @@ class valor_variavelC:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E3()
             
             elif self.list[0] == '[':
@@ -67,7 +68,7 @@ class valor_variavelC:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token)
+                iniciar_automato = constante.parametro_const.parametro_const(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E3()
 
             else:

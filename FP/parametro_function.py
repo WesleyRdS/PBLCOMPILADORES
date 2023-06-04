@@ -39,15 +39,18 @@ class parametro_function:
                 self.n.pop(0)
                 self.E0()
             elif self.list[0] == ")":
-                if self.destino == "struct_func":
-                    iniciar_automato = estrutura_de_dados.struct_exp.struct_exp(self.list,self.n, self.erro,self.token)
-                    iniciar_automato.E8()
-                elif self.destino == "atr_v":
-                    self.list.pop(0)
-                    self.token.pop(0)
-                    self.n.pop(0)
-                    iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token)
-                    iniciar_automato.E8()
+                if len(self.destino) > 0:
+                    if self.destino[0] == "struct_func":
+                        self.destino.pop(0)
+                        iniciar_automato = estrutura_de_dados.struct_exp.struct_exp(self.list,self.n, self.erro,self.token,self.destino)
+                        iniciar_automato.E8()
+                    elif self.destino[0] == "atr_v":
+                        self.destino.pop(0)
+                        self.list.pop(0)
+                        self.token.pop(0)
+                        self.n.pop(0)
+                        iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.destino)
+                        iniciar_automato.E8()
             else:
                 self.erro.append("ERROR: Line-"+self.n[0]+" Read "+self.list[0]+  " Expected: ',' or ')'\n")
                 self.E0()

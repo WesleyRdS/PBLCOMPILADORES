@@ -22,11 +22,12 @@ import FP.procedu
 
 
 class bloco_start:
-    def __init__(self, lista, linha, arquivo, classe):
+    def __init__(self, lista, linha, arquivo, classe, remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
 
     def E0(self):
@@ -69,31 +70,40 @@ class bloco_start:
         print(self.token)
         if len(self.list) > 0:
             if self.list[0] == "var":
-                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = variavel.automato_bloco_var.bloco_var(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0() 
             elif self.token[0] == "IDE":
-                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,"start")
+                self.remetente.insert(0,"start")
+                iniciar_automato = atribuir_valor.atribuir_valor(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "if":
-                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = if_while.ifthen.ifthen(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "while":
-                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = if_while.while_a.while_a(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "struct":
-                iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = estrutura_de_dados.struct.struct(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "procedure":
-                iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = FP.procedu.procedu(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "function":
-                iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = FP.func.func(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "print":
-                iniciar_automato = PR.printar.printar(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = PR.printar.printar(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             elif self.list[0] == "read":
-                iniciar_automato = PR.reader.reader(self.list,self.n, self.erro,self.token)
+                self.remetente.insert(0,"start")
+                iniciar_automato = PR.reader.reader(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E0()
             else:
                 self.E3()

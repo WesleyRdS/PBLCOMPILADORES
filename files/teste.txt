@@ -1,5 +1,29 @@
+var{
+    int a = 0;
+    int b[5][3];
+    real resultado
+}
+
+const{
+    int pi = 3.14
+}
+function int somar( int x){
+        resutado = a + pi;
+        return resultado;
+}
 start{
-    while( a == 3+2){
-        a+b = 3;
+
+    var{
+        int i = 0;
+        real soma = 0;
     }
+    while(i <= 10){
+        if(soma/2 == pi) then{
+            soma = soma - 1.07;
+        } else{
+            soma = somar(py);
+        }
+        i++;
+    }
+    print(soma);
 }

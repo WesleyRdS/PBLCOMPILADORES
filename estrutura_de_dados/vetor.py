@@ -1,9 +1,10 @@
 class vetor_matriz:
-    def __init__(self, lista, linha, arquivo, classe):
+    def __init__(self, lista, linha, arquivo, classe, remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
 
     def E0(self):

@@ -2,11 +2,12 @@ import variavel.parametro_var
 
 class valor_variavel:
 
-    def __init__(self,lista,linha, arquivo,classe):
+    def __init__(self,lista,linha, arquivo,classe, remetente):
         self.list = lista
         self.erro = arquivo
         self.n = linha
         self.token = classe
+        self.remetente = remetente
 
     def E0(self):
         print(self.list)
@@ -17,7 +18,7 @@ class valor_variavel:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token, self.remetente)
                 iniciar_automato.E2()
             
             elif self.list[0] == '[':
@@ -67,7 +68,7 @@ class valor_variavel:
                 self.token.pop(0)
                 self.list.pop(0)
                 self.n.pop(0)
-                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token)
+                iniciar_automato = variavel.parametro_var.parametro_var(self.list,self.n, self.erro,self.token,self.remetente)
                 iniciar_automato.E2()
             
             else:
